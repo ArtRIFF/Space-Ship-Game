@@ -3,6 +3,8 @@ import { MainScene } from "./scenes/MainScene";
 import { gameModel } from "./managers/GameModel";
 
 const app = new PIXI.Application();
+(globalThis as any).__PIXI_APP__ = app;
+
 app
   .init({
     width: 1280,
