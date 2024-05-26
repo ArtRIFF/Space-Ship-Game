@@ -14,10 +14,23 @@ export class MainScene {
   ) {
     const { spaceShipSprite, spaceBackgroundSprite } = textures;
     this.background = new GameBackground(spaceBackgroundSprite);
-    this.spaceShip = new SpaceShipUnit(spaceShipSprite);
-
     this.addToScene(this.background.container);
-    this.addToScene(this.spaceShip.container);
+    this.spaceShip = new SpaceShipUnit(spaceShipSprite, stage);
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowRight":
+          this.spaceShip.moveRight();
+          break;
+        case "ArrowLeft":
+          this.spaceShip.moveLeft();
+          break;
+        case " ":
+          this.spaceShip.shot();
+        default:
+          break;
+      }
+    });
   }
 
   private addToScene(container: Sprite) {

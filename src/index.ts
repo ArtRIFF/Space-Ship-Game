@@ -1,12 +1,15 @@
 import * as PIXI from "pixi.js";
 import { MainScene } from "./scenes/MainScene";
+import { gameModel } from "./managers/GameModel";
 
 const app = new PIXI.Application();
+(globalThis as any).__PIXI_APP__ = app;
+
 app
   .init({
     width: 1280,
     height: 720,
-    backgroundColor: 0x1099bb,
+    backgroundColor: 0x000,
     canvas: document.getElementById("game-canvas") as HTMLCanvasElement,
   })
   .then(async () => {
@@ -15,6 +18,11 @@ app
     const spaceBackgroundTexture = await PIXI.Assets.load("space_bg.jpg");
     const spaceShipSprite = PIXI.Sprite.from(spaceShipTexture);
     const spaceBackgroundSprite = PIXI.Sprite.from(spaceBackgroundTexture);
+
+    gameModel.setScreenSize({
+      width: app.screen.width,
+      height: app.screen.height,
+    });
 
     const mainScene = new MainScene(app.stage, {
       spaceShipSprite: spaceShipSprite,
