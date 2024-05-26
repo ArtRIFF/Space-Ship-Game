@@ -18,6 +18,19 @@ export class MainScene {
 
     this.addToScene(this.background.container);
     this.addToScene(this.spaceShip.container);
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowRight":
+          this.spaceShip.moveRight();
+          break;
+        case "ArrowLeft":
+          this.spaceShip.moveLeft();
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   private addToScene(container: Sprite) {
