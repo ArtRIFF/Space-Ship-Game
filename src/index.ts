@@ -16,8 +16,10 @@ app
     document.body.appendChild(app.canvas);
     const spaceShipTexture = await PIXI.Assets.load("space-ship.png");
     const spaceBackgroundTexture = await PIXI.Assets.load("space_bg.jpg");
+    const asteroidTexture = await PIXI.Assets.load("asteroid.png");
     const spaceShipSprite = PIXI.Sprite.from(spaceShipTexture);
     const spaceBackgroundSprite = PIXI.Sprite.from(spaceBackgroundTexture);
+    const asteroidSprite = PIXI.Sprite.from(asteroidTexture);
 
     gameModel.setScreenSize({
       width: app.screen.width,
@@ -27,6 +29,7 @@ app
     const mainScene = new MainScene(app.stage, {
       spaceShipSprite: spaceShipSprite,
       spaceBackgroundSprite: spaceBackgroundSprite,
+      asteroidSprite: asteroidSprite,
     });
 
     app.ticker.add((_delta) => {

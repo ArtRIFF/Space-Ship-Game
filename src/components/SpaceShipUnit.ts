@@ -1,4 +1,4 @@
-import { Container, Graphics, Point, Sprite } from "pixi.js";
+import { Container, Point, Sprite } from "pixi.js";
 import gsap from "gsap";
 import { gameModel } from "../managers/GameModel";
 import { Rocket } from "./Rocket";
@@ -8,26 +8,35 @@ type TMoveDiraction = "left" | "right";
 
 export class SpaceShipUnit {
   private readonly moveStep = 100;
-  private readonly rocketLimits = 10;
+  private readonly rocketsLimit;
   private rockets: Array<Rocket> = new Array();
+  public firedRockets: Array<Rocket> = new Array();
   private rocketCounter = 0;
   public container: Container = new Container();
 
   constructor(private sprite: Sprite, private stage: Container) {
     sprite.anchor.set(0.5);
     sprite.setSize(100);
-
+    this.rocketsLimit = GameConfig.rocketParam.ROCKETS_LIMIT;
     this.stage.addChild(this.container);
     this.container.addChild(this.sprite);
     this.moveOnStartPosition();
+    this.addRockets();
+  }
+
+  addRockets() {
+    this.rockets = [];
+    this.firedRockets = [];
+    this.rocketCounter = 0;
     const screenSize = gameModel.getScreenSize();
-    for (let index = 0; index < this.rocketLimits; index++) {
-      const shootingPosition = this.getShootingPosition();
+
+    for (let index = 0; index < this.rocketsLimit; index++) {
       const rocket = new Rocket(
         { x: 0, y: screenSize.height - this.container.height },
         GameConfig.rocketParam.USER_ROCKET_COLOR,
         "top"
       );
+
       this.rockets.push(rocket);
     }
   }
@@ -60,7 +69,7 @@ export class SpaceShipUnit {
           this.container.position.x = screenWidth - this.container.width / 2;
         }
 
-        if (this.container.position._x < this.container.width / 2) {
+        if (this.container.position.x < this.container.width / 2) {
           this.container.position.x = this.container.width / 2;
         }
       },
@@ -75,11 +84,12 @@ export class SpaceShipUnit {
   }
 
   shot() {
-    if (this.rocketCounter < this.rocketLimits) {
+    if (this.rocketCounter < this.rocketsLimit) {
       const shootingPosition = this.getShootingPosition();
-
-      this.rockets[this.rocketCounter].fly(shootingPosition);
-      this.stage.addChild(this.rockets[this.rocketCounter].container);
+      const rocket = this.rockets.pop();
+      rocket!.fly(shootingPosition);
+      this.firedRockets.push(rocket!);
+      this.stage.addChild(rocket!.container);
       this.rocketCounter++;
     }
   }
@@ -98,5 +108,14 @@ export class SpaceShipUnit {
     };
   }
 
-  update(delta: number) {}
+  update() {
+    if (this.firedRockets.length !== 0) {
+      this.firedRockets.forEach((rocket, ind) => {
+        if (rocket.isCollision) {
+          this.firedRockets.splice(ind, 1);
+          rocket.container.destroy();
+        }
+      });
+    }
+  }
 }

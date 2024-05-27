@@ -3,5 +3,10 @@ export class GameConfig {
     USER_ROCKET_COLOR: "0XFEFFFF",
     ENEMY_ROCKET_COLOR: "0XFF0000",
     ROCKET_SIZE: 10,
+    ROCKETS_LIMIT: 10,
+  };
+
+  static readonly asteroidParam = {
+    ASTEROIDS_LIMIT: 5,
   };
 }
