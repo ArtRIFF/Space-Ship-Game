@@ -2,15 +2,17 @@ import { Container, Point, Sprite } from "pixi.js";
 import { SpaceShipUnit } from "../components/SpaceShipUnit";
 import { GameBackground } from "../components/GameBackground";
 import { Asteroid } from "../components/Asteroid";
-import { Rocket } from "../components/Rocket";
 import { GameConfig } from "../config/GameConfig";
 import { gameModel } from "../managers/GameModel";
 import { getRandomArbitrary } from "../helpers/mathFunction";
+import { CollisionChecker } from "../managers/CollisionChecker";
 
 export class MainScene {
-  private readonly spaceShip: SpaceShipUnit;
+  private spaceShip: SpaceShipUnit;
   private background: GameBackground;
   private asteroids: Array<Asteroid> = [];
+  private asteroidsCollisionChecker: CollisionChecker = new CollisionChecker();
+
   constructor(
     private stage: Container,
     textures: {
@@ -24,6 +26,12 @@ export class MainScene {
     this.addToScene(this.background.container);
     this.spaceShip = new SpaceShipUnit(spaceShipSprite, stage);
     this.addAsteroids(asteroidSprite);
+
+    this.asteroidsCollisionChecker.setChecker(
+      this.asteroids,
+      this.spaceShip,
+      () => this.onAsteroidHit()
+    );
 
     document.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -39,6 +47,10 @@ export class MainScene {
           break;
       }
     });
+  }
+
+  private onAsteroidHit() {
+    console.log(`Asteroid destroyed, left ${this.asteroids.length}`);
   }
 
   private addToScene(container: Sprite | Container) {
@@ -63,20 +75,13 @@ export class MainScene {
       );
       asteroid.setPosition(randomX, randomY);
 
+      this.asteroids.push(asteroid);
       this.addToScene(asteroid.container);
     }
   }
 
   upadate(delta: number): void {
     this.spaceShip.update();
-    // const borderY = this.asteroids[0].container.position.y + this.asteroids[0].container.height;
-    // const borderX = this.asteroids[0].container.position.x + this.asteroids[0].container.width;
-    // const colissionY = this.spaceShip.rockets[0].container.getBounds().y <= borderY;
-    // const colissionX = this.spaceShip.rockets[0].container.getBounds().x >= this.asteroids[0].container.position.x
-    // && this.spaceShip.rockets[0].container.getBounds().x <= borderX
-    // if (colissionY && colissionX) {
-    //   console.log("Collision");
-
-    // }
+    this.asteroidsCollisionChecker.update();
   }
 }

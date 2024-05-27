@@ -1,4 +1,4 @@
-import { Container, Graphics, Point, Sprite } from "pixi.js";
+import { Container, Point, Sprite } from "pixi.js";
 import gsap from "gsap";
 import { gameModel } from "../managers/GameModel";
 import { Rocket } from "./Rocket";
@@ -110,11 +110,12 @@ export class SpaceShipUnit {
 
   update() {
     if (this.firedRockets.length !== 0) {
-      for (const rocket of this.firedRockets) {
+      this.firedRockets.forEach((rocket, ind) => {
         if (rocket.isCollision) {
-          this.firedRockets = this.firedRockets.filter((r) => r !== rocket);
+          this.firedRockets.splice(ind, 1);
+          rocket.container.destroy();
         }
-      }
+      });
     }
   }
 }

@@ -33,16 +33,11 @@ export class Rocket {
       y: `${this.attackDiraction === "top" ? "-" : "+"}=${distance}`,
       duration: this.flyDuration,
       ease: "ease.out",
-      onUpdate: () => {
-        if (this.isCollision) {
-          console.log("onUpdate");
+      onComplete: () => {
+        if (!this.isCollision) {
+          this.isCollision = true;
           this.container.destroy();
         }
-      },
-      onComplete: () => {
-        console.log("onComplete");
-        this.isCollision = true;
-        this.container.destroy();
       },
     });
   }
