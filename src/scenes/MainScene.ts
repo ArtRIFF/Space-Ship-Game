@@ -6,12 +6,18 @@ import { GameConfig } from "../config/GameConfig";
 import { gameModel } from "../managers/GameModel";
 import { getRandomArbitrary } from "../helpers/mathFunction";
 import { CollisionChecker } from "../managers/CollisionChecker";
+import Label from "../components/Label";
+import { Timer } from "../components/Timer";
+import { MainPopup } from "../components/MainPopup";
 
 export class MainScene {
   private spaceShip: SpaceShipUnit;
   private background: GameBackground;
   private asteroids: Array<Asteroid> = [];
   private asteroidsCollisionChecker: CollisionChecker = new CollisionChecker();
+  private rocketsLabel: Label = new Label("Rockets:", 10);
+  private timer: Timer;
+  private popup: MainPopup;
 
   constructor(
     private stage: Container,
@@ -27,11 +33,31 @@ export class MainScene {
     this.spaceShip = new SpaceShipUnit(spaceShipSprite, stage);
     this.addAsteroids(asteroidSprite);
 
+    this.addToScene(this.rocketsLabel.container);
+    this.rocketsLabel.setPosition(50, 50);
+
     this.asteroidsCollisionChecker.setChecker(
       this.asteroids,
       this.spaceShip,
       () => this.onAsteroidHit()
     );
+
+    this.timer = new Timer(GameConfig.timerParam.GAME_TIME, () =>
+      this.onTimerCountEnd()
+    );
+    this.timer.setPosition(
+      gameModel.getScreenSize().width - this.timer.container.width - 50,
+      50
+    );
+    this.popup = new MainPopup(() => this.startNewGame());
+    this.popup.setPosition(
+      gameModel.getScreenSize().width / 2 - this.popup.container.width / 2,
+      gameModel.getScreenSize().height / 2 - this.popup.container.height / 2
+    );
+    this.popup.close();
+
+    this.addToScene(this.timer.container);
+    this.addToScene(this.popup.container);
 
     document.addEventListener("keydown", (e) => {
       switch (e.key) {
@@ -78,6 +104,15 @@ export class MainScene {
       this.asteroids.push(asteroid);
       this.addToScene(asteroid.container);
     }
+  }
+
+  onTimerCountEnd() {
+    console.log("NO TIME LEFT");
+  }
+
+  startNewGame() {
+    console.log("Start new game");
+    this.popup.close();
   }
 
   upadate(delta: number): void {
