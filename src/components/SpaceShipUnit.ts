@@ -9,7 +9,7 @@ type TMoveDiraction = "left" | "right";
 export class SpaceShipUnit {
   private readonly moveStep = 100;
   private readonly rocketsLimit;
-  private rockets: Array<Rocket> = new Array();
+  private _rockets: Array<Rocket> = new Array();
   public firedRockets: Array<Rocket> = new Array();
   private rocketCounter = 0;
   public container: Container = new Container();
@@ -25,7 +25,7 @@ export class SpaceShipUnit {
   }
 
   addRockets() {
-    this.rockets = [];
+    this._rockets = [];
     this.firedRockets = [];
     this.rocketCounter = 0;
     const screenSize = gameModel.getScreenSize();
@@ -37,7 +37,7 @@ export class SpaceShipUnit {
         "top"
       );
 
-      this.rockets.push(rocket);
+      this._rockets.push(rocket);
     }
   }
 
@@ -76,22 +76,26 @@ export class SpaceShipUnit {
     });
   }
 
-  private moveOnStartPosition() {
+  moveOnStartPosition() {
     const screenSize = gameModel.getScreenSize();
     const x = screenSize.width / 2;
     const y = screenSize.height - this.container.height;
     this.container.position.set(x, y);
   }
 
-  shot() {
+  async shot() {
     if (this.rocketCounter < this.rocketsLimit) {
       const shootingPosition = this.getShootingPosition();
-      const rocket = this.rockets.pop();
-      rocket!.fly(shootingPosition);
+      const rocket = this._rockets.pop();
       this.firedRockets.push(rocket!);
       this.stage.addChild(rocket!.container);
       this.rocketCounter++;
+      await rocket!.fly(shootingPosition);
     }
+  }
+
+  get rocketsLeft(): number {
+    return this._rockets.length;
   }
 
   getShootingPosition(): { x: number; y: number } {

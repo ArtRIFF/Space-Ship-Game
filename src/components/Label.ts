@@ -22,6 +22,8 @@ export default class Label {
     this.container.addChild(this.title);
     this.container.addChild(this.numbers);
     this.setNumbersPosition();
+    this.container.sortableChildren = true;
+    this.container.zIndex = 2;
   }
 
   private setNumbersPosition() {

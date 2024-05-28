@@ -15,9 +15,10 @@ export class MainScene {
   private background: GameBackground;
   private asteroids: Array<Asteroid> = [];
   private asteroidsCollisionChecker: CollisionChecker = new CollisionChecker();
-  private rocketsLabel: Label = new Label("Rockets:", 10);
+  private rocketsLabel: Label = new Label("Rockets:", 0);
   private timer: Timer;
   private popup: MainPopup;
+  private asteroidSprite: Sprite;
 
   constructor(
     private stage: Container,
@@ -28,19 +29,12 @@ export class MainScene {
     }
   ) {
     const { spaceShipSprite, spaceBackgroundSprite, asteroidSprite } = textures;
+    this.asteroidSprite = asteroidSprite;
     this.background = new GameBackground(spaceBackgroundSprite);
     this.addToScene(this.background.container);
     this.spaceShip = new SpaceShipUnit(spaceShipSprite, stage);
-    this.addAsteroids(asteroidSprite);
-
     this.addToScene(this.rocketsLabel.container);
     this.rocketsLabel.setPosition(50, 50);
-
-    this.asteroidsCollisionChecker.setChecker(
-      this.asteroids,
-      this.spaceShip,
-      () => this.onAsteroidHit()
-    );
 
     this.timer = new Timer(GameConfig.timerParam.GAME_TIME, () =>
       this.onTimerCountEnd()
@@ -49,43 +43,52 @@ export class MainScene {
       gameModel.getScreenSize().width - this.timer.container.width - 50,
       50
     );
-    this.popup = new MainPopup(() => this.startNewGame());
+    this.popup = new MainPopup(() => this.onClickStartGame());
     this.popup.setPosition(
       gameModel.getScreenSize().width / 2 - this.popup.container.width / 2,
       gameModel.getScreenSize().height / 2 - this.popup.container.height / 2
     );
-    this.popup.close();
 
     this.addToScene(this.timer.container);
     this.addToScene(this.popup.container);
 
-    document.addEventListener("keydown", (e) => {
-      switch (e.key) {
-        case "ArrowRight":
-          this.spaceShip.moveRight();
-          break;
-        case "ArrowLeft":
-          this.spaceShip.moveLeft();
-          break;
-        case " ":
-          this.spaceShip.shot();
-        default:
-          break;
-      }
-    });
+    document.addEventListener("keydown", this.onKeyDown.bind(this));
+    gameModel.gameEmmiter.on("START_GAME", () => this.onStartGame());
+    gameModel.gameEmmiter.on("WIN_GAME", () => this.onWinGame());
+    gameModel.gameEmmiter.on("LOSE_GAME", () => this.onLoseGame());
+  }
+
+  async onKeyDown(e: KeyboardEvent) {
+    switch (e.key) {
+      case "ArrowRight":
+        this.spaceShip.moveRight();
+        break;
+      case "ArrowLeft":
+        this.spaceShip.moveLeft();
+        break;
+      case " ":
+        const rocketsLeft = this.spaceShip.rocketsLeft;
+        if (rocketsLeft >= 0) {
+          this.rocketsLabel.setNumbers(rocketsLeft);
+          await this.spaceShip.shot();
+          gameModel.reduceRocketsAmount();
+        }
+      default:
+        break;
+    }
   }
 
   private onAsteroidHit() {
-    console.log(`Asteroid destroyed, left ${this.asteroids.length}`);
+    gameModel.reduceAsteroidsAmount();
   }
 
   private addToScene(container: Sprite | Container) {
     this.stage.addChild(container);
   }
 
-  addAsteroids(sprite: Sprite) {
+  addAsteroids() {
     this.asteroids = [];
-
+    const sprite = this.asteroidSprite;
     const asteroidsLimit = GameConfig.asteroidParam.ASTEROIDS_LIMIT;
     for (let index = 0; index < asteroidsLimit; index++) {
       const spriteCopy = new Sprite(sprite.texture);
@@ -108,11 +111,42 @@ export class MainScene {
 
   onTimerCountEnd() {
     console.log("NO TIME LEFT");
+    gameModel.noTimeLeft();
   }
 
-  startNewGame() {
-    console.log("Start new game");
+  onClickStartGame() {
+    gameModel.startGame();
+  }
+
+  onStartGame() {
+    this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
+    this.spaceShip.addRockets();
+    this.spaceShip.moveOnStartPosition();
+    this.addAsteroids();
+    this.asteroidsCollisionChecker.setChecker(
+      this.asteroids,
+      this.spaceShip,
+      () => this.onAsteroidHit()
+    );
     this.popup.close();
+    this.timer.reset();
+    this.timer.start();
+  }
+
+  onWinGame() {
+    this.stopGame();
+    this.popup.show(true);
+  }
+
+  onLoseGame() {
+    this.stopGame();
+    this.asteroids.forEach((asteroid) => asteroid.container.destroy());
+    this.popup.show(false);
+  }
+
+  stopGame() {
+    this.asteroidsCollisionChecker.deactivate();
+    this.timer.pause();
   }
 
   upadate(delta: number): void {
