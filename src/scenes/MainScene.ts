@@ -69,7 +69,7 @@ export class MainScene {
       case " ":
         const rocketsLeft = this.spaceShip.rocketsLeft;
         if (rocketsLeft >= 0) {
-          this.rocketsLabel.setNumbers(rocketsLeft);
+          this.rocketsLabel.setNumbers(rocketsLeft - 1);
           await this.spaceShip.shot();
           gameModel.reduceRocketsAmount();
         }
@@ -93,6 +93,12 @@ export class MainScene {
     for (let index = 0; index < asteroidsLimit; index++) {
       const spriteCopy = new Sprite(sprite.texture);
       const asteroid = new Asteroid(spriteCopy);
+      const scaleVariationArray =
+        GameConfig.asteroidParam.ASTEROIDS_SIZE_VARIATION;
+      const randomIndex = Math.floor(
+        getRandomArbitrary(0, scaleVariationArray.length)
+      );
+      asteroid.container.scale.set(scaleVariationArray[randomIndex]);
       const screenSize = gameModel.getScreenSize();
       const randomX = getRandomArbitrary(
         0,
@@ -102,10 +108,11 @@ export class MainScene {
         0,
         screenSize.height / 2 - asteroid.container.height
       );
-      asteroid.setPosition(randomX, randomY);
 
+      asteroid.setPosition(randomX, randomY);
       this.asteroids.push(asteroid);
       this.addToScene(asteroid.container);
+      asteroid.appear();
     }
   }
 
@@ -140,7 +147,7 @@ export class MainScene {
 
   onLoseGame() {
     this.stopGame();
-    this.asteroids.forEach((asteroid) => asteroid.container.destroy());
+    this.asteroids.forEach((asteroid) => asteroid.exploud());
     this.popup.show(false);
   }
 
