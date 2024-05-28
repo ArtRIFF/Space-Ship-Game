@@ -43,7 +43,7 @@ export class CollisionChecker {
 
             if (isCollisionY && isCollisionX) {
               this.targets.splice(index, 1);
-              target.container.destroy();
+              target.exploud();
               rocket.isCollision = true;
               this.callbackFunc();
             }

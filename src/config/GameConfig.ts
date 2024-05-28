@@ -8,6 +8,9 @@ export class GameConfig {
 
   static readonly asteroidParam = {
     ASTEROIDS_LIMIT: 5,
+    ASTEROIDS_SIZE_VARIATION: [1, 1.2, 0.8, 0.6],
+    ASTEROIDS_SPEED_VARIATION: [0, 0.6, 1, 2, 3],
+    ASTEROIDS_COLOR_VARIATION: ["0xE580FF", "0xBFAB60", "0x60ABBF", "0xBF7460"],
   };
 
   static readonly labelFontStyle: any = {
