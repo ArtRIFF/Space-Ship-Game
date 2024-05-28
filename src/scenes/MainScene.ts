@@ -68,7 +68,7 @@ export class MainScene {
         break;
       case " ":
         const rocketsLeft = this.spaceShip.rocketsLeft;
-        if (rocketsLeft >= 0) {
+        if (rocketsLeft > 0) {
           this.rocketsLabel.setNumbers(rocketsLeft - 1);
           await this.spaceShip.shot();
           gameModel.reduceRocketsAmount();
