@@ -15,6 +15,8 @@ export class Timer {
     this.startTime = startTime;
     this.counter = startTime;
     this.container.addChild(this.label.container);
+    this.container.sortableChildren = true;
+    this.container.zIndex = 2;
   }
 
   setPosition(x: number, y: number) {

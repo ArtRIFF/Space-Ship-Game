@@ -18,6 +18,8 @@ export class MainPopup {
     this.button = new Button("Start Game", onclickCallback);
     this.container.addChild(this.button.container);
     this.alignToCenter(this.button.container, 120);
+    this.container.sortableChildren = true;
+    this.container.zIndex = 2;
   }
 
   setPosition(x: number, y: number) {
