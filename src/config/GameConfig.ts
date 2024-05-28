@@ -28,5 +28,6 @@ export class GameConfig {
   static readonly popupParam = {
     BACKGROUND_COLOR: "#2458c2",
     BUTTON_COLOR: "#8db83d",
+    BUTTON_HOVER_COLOR: "#A30000",
   };
 }

@@ -1,6 +1,7 @@
 import { Container, Graphics, Text } from "pixi.js";
 import { GameConfig } from "../config/GameConfig";
 import { Button } from "./Button";
+import gsap from "gsap";
 
 export class MainPopup {
   public container = new Container();
@@ -47,9 +48,20 @@ export class MainPopup {
     this.title.text = isWin ? "YOU WIN" : "YOU LOSE";
     this.button.changeTitle("Restart");
     this.alignToCenter(this.title, 30);
+    gsap.to(this.container, {
+      alpha: 1,
+      duration: 0.5,
+    });
   }
 
   close() {
-    this.container.visible = false;
+    gsap.to(this.container, {
+      alpha: 0,
+      delay: 0.1,
+      duration: 0.3,
+      onComplete: () => {
+        this.container.visible = false;
+      },
+    });
   }
 }

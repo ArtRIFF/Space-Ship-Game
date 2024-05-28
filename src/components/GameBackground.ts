@@ -1,5 +1,8 @@
-import { Sprite } from "pixi.js";
+import { Container, Sprite } from "pixi.js";
 
 export class GameBackground {
-  constructor(public container: Sprite) {}
+  public container: Container = new Container();
+  constructor(private sprite: Sprite) {
+    this.container.addChild(this.sprite);
+  }
 }
