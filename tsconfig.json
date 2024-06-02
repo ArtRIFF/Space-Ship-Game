@@ -5,6 +5,9 @@
       "sourceMap": true,
       "strict": true,
       "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true
+      "forceConsistentCasingInFileNames": true,
+       "paths": {
+        "constants": ["./src/types/types.ts"]
+       }
     }
   }
