@@ -15,6 +15,11 @@ class PromiseHelper {
     });
     return assign;
   }
+  getDelayPromise(delaySeconds: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, delaySeconds * 1000);
+    });
+  }
 }
 
 const promiseHelper = new PromiseHelper();

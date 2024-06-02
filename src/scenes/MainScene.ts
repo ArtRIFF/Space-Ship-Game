@@ -1,4 +1,5 @@
-import { Container, Point, Sprite } from "pixi.js";
+import { IGameScene } from "../types/types";
+import { Container, Sprite } from "pixi.js";
 import { SpaceShipUnit } from "../components/SpaceShipUnit";
 import { GameBackground } from "../components/GameBackground";
 import { Asteroid } from "../components/Asteroid";
@@ -10,7 +11,7 @@ import Label from "../components/Label";
 import { Timer } from "../components/Timer";
 import { MainPopup } from "../components/MainPopup";
 
-export class MainScene {
+export class MainScene implements IGameScene {
   private spaceShip: SpaceShipUnit;
   private background: GameBackground;
   private asteroids: Array<Asteroid> = [];
@@ -20,16 +21,10 @@ export class MainScene {
   private popup: MainPopup;
   private asteroidSprite: Sprite;
 
-  constructor(
-    private stage: Container,
-    textures: {
-      spaceShipSprite: Sprite;
-      spaceBackgroundSprite: Sprite;
-      asteroidSprite: Sprite;
-    }
-  ) {
-    const { spaceShipSprite, spaceBackgroundSprite, asteroidSprite } = textures;
-    this.asteroidSprite = asteroidSprite;
+  constructor(private stage: Container, textures: Record<string, any>) {
+    const spaceShipSprite = Sprite.from(textures["space_ship"]);
+    const spaceBackgroundSprite = Sprite.from(textures["space_bg"]);
+    this.asteroidSprite = Sprite.from(textures["asteroid"]);
     this.background = new GameBackground(spaceBackgroundSprite);
     this.addToScene(this.background.container);
     this.spaceShip = new SpaceShipUnit(spaceShipSprite, stage);
@@ -156,7 +151,7 @@ export class MainScene {
     this.timer.pause();
   }
 
-  upadate(delta: number): void {
+  update(delta: number): void {
     this.spaceShip.update();
     this.asteroidsCollisionChecker.update();
   }

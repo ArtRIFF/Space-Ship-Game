@@ -1,6 +1,8 @@
 import * as PIXI from "pixi.js";
 import { MainScene } from "./scenes/MainScene";
 import { gameModel } from "./managers/GameModel";
+import promiseHelper from "./helpers/ResolvablePromise";
+import { loaderScene } from "./scenes/LoaderScene";
 
 const app = new PIXI.Application();
 (globalThis as any).__PIXI_APP__ = app;
@@ -13,26 +15,30 @@ app
     canvas: document.getElementById("game-canvas") as HTMLCanvasElement,
   })
   .then(async () => {
+    document.querySelector(".preloader")?.remove();
     document.body.appendChild(app.canvas);
-    const spaceShipTexture = await PIXI.Assets.load("space-ship.png");
-    const spaceBackgroundTexture = await PIXI.Assets.load("space_bg.jpg");
-    const asteroidTexture = await PIXI.Assets.load("asteroid.png");
-    const spaceShipSprite = PIXI.Sprite.from(spaceShipTexture);
-    const spaceBackgroundSprite = PIXI.Sprite.from(spaceBackgroundTexture);
-    const asteroidSprite = PIXI.Sprite.from(asteroidTexture);
 
     gameModel.setScreenSize({
       width: app.screen.width,
       height: app.screen.height,
     });
 
-    const mainScene = new MainScene(app.stage, {
-      spaceShipSprite: spaceShipSprite,
-      spaceBackgroundSprite: spaceBackgroundSprite,
-      asteroidSprite: asteroidSprite,
-    });
+    loaderScene.addAssets(
+      [
+        { alias: "space_ship", src: "space-ship.png" },
+        { alias: "space_bg", src: "space_bg.jpg" },
+        { alias: "asteroid", src: "asteroid.png" },
+      ],
+      app.stage
+    );
 
-    app.ticker.add((_delta) => {
-      mainScene.upadate(_delta.deltaTime);
+    loaderScene.load().then(async (texture) => {
+      await promiseHelper.getDelayPromise(0.5);
+      loaderScene.delete();
+      const mainScene = new MainScene(app.stage, texture);
+
+      app.ticker.add((_delta) => {
+        mainScene.update(_delta.deltaTime);
+      });
     });
   });
