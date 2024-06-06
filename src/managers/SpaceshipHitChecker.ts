@@ -30,7 +30,8 @@ export class SpaceshipHitChecker {
       const isCollisionX =
         rocketCoordinate.x >
           this.target.container.x - this.target.container.width / 2 &&
-        rocketCoordinate.x < this.target.container.x;
+        rocketCoordinate.x <
+          this.target.container.x + this.target.container.width / 2;
 
       if (isCollisionX && isCollisionY) {
         this.target.exploud();
