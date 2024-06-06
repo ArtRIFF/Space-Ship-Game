@@ -25,6 +25,7 @@ export class MainScene implements IGameScene {
   private enemyCollisionChecker: SpaceshipHitChecker =
     new SpaceshipHitChecker();
   private rocketsLabel: Label = new Label("Rockets:", 0);
+  private enemyBossLabel: Label = new Label("Boss Lives:", 0);
   private timer: Timer;
   private popup: MainPopup;
   private asteroidSprite: Sprite;
@@ -43,6 +44,9 @@ export class MainScene implements IGameScene {
     });
     this.addToScene(this.rocketsLabel.container);
     this.rocketsLabel.setPosition(50, 50);
+
+    this.addToScene(this.enemyBossLabel.container);
+    this.enemyBossLabel.setPosition(300, 50);
 
     this.timer = new Timer(GameConfig.timerParam.GAME_TIME, () =>
       this.onTimerCountEnd()
@@ -101,6 +105,7 @@ export class MainScene implements IGameScene {
   private onEnemyBossHit() {
     console.log("Y`ve been hit BOSS!");
     this.enemyCollisionChecker.activate();
+    this.enemyBossLabel.setNumbers(gameModel.enemyBossLifes - 1);
     gameModel.enemyHit();
   }
 
@@ -149,6 +154,8 @@ export class MainScene implements IGameScene {
 
   onStartGame() {
     this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
+    console.log(gameModel.enemyBossLifes);
+    this.enemyBossLabel.container.visible = false;
     this.spaceShip.addRockets();
     this.spaceShip.show();
     this.addAsteroids();
@@ -164,6 +171,8 @@ export class MainScene implements IGameScene {
 
   async onFinalLevel() {
     this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
+    this.enemyBossLabel.container.visible = true;
+    this.enemyBossLabel.setNumbers(gameModel.enemyBossLifes);
     this.spaceShip.addRockets();
     this.popup.close();
     this.spaceShip.show();

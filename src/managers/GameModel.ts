@@ -26,6 +26,10 @@ class GameModel {
     return this._rocketsAmount;
   }
 
+  get enemyBossLifes() {
+    return this._enemyBossLifes;
+  }
+
   get asteroidsAmount() {
     return this._asteroidsAmount;
   }
@@ -58,18 +62,21 @@ class GameModel {
 
   spaceshipHit() {
     this.gameEmmiter.emit("LOSE_GAME");
+    this.isGameEnd = true;
   }
 
   enemyHit() {
     this._enemyBossLifes--;
     if (this._enemyBossLifes === 0) {
       this.gameEmmiter.emit("WIN_GAME");
+      this.isGameEnd = true;
     }
   }
 
   noTimeLeft() {
     if (!this.isGameEnd) {
       this.gameEmmiter.emit("LOSE_GAME");
+      this.isGameEnd = true;
     }
   }
 }
