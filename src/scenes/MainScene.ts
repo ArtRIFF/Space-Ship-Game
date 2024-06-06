@@ -13,6 +13,7 @@ import { MainPopup } from "../components/MainPopup";
 import { EnemyBossUnit } from "../components/EnemyBossUnit";
 import { EnemyBossManager, enemyManager } from "../managers/EnemyBossManager";
 import { SpaceshipHitChecker } from "../managers/SpaceshipHitChecker";
+import { TransitionPopup } from "../components/TransitionPopup";
 
 export class MainScene implements IGameScene {
   private spaceShip: SpaceShipUnit;
@@ -30,6 +31,7 @@ export class MainScene implements IGameScene {
   private popup: MainPopup;
   private asteroidSprite: Sprite;
   private enemyBossManager: EnemyBossManager = enemyManager;
+  private transitionPopup: TransitionPopup = new TransitionPopup();
 
   constructor(private stage: Container, textures: Record<string, any>) {
     const spaceShipSprite = Sprite.from(textures["space_ship"]);
@@ -48,6 +50,8 @@ export class MainScene implements IGameScene {
     this.addToScene(this.enemyBossLabel.container);
     this.enemyBossLabel.setPosition(300, 50);
 
+    this.addToScene(this.transitionPopup.container);
+
     this.timer = new Timer(GameConfig.timerParam.GAME_TIME, () =>
       this.onTimerCountEnd()
     );
@@ -62,12 +66,14 @@ export class MainScene implements IGameScene {
     );
 
     this.enemyBossManager.setManager(this.enemyBoss, this.spaceShip);
+    this.enemyBossLabel.container.visible = false;
 
     this.addToScene(this.timer.container);
     this.addToScene(this.popup.container);
 
     document.addEventListener("keydown", this.onKeyDown.bind(this));
-    gameModel.gameEmmiter.on("START_GAME", () => this.onFinalLevel());
+    gameModel.gameEmmiter.on("START_GAME", () => this.onStartGame());
+    gameModel.gameEmmiter.on("FINAL_LEVEL", () => this.onFinalLevel());
     gameModel.gameEmmiter.on("WIN_GAME", () => this.onWinGame());
     gameModel.gameEmmiter.on("LOSE_GAME", () => this.onLoseGame());
   }
@@ -97,13 +103,11 @@ export class MainScene implements IGameScene {
   }
 
   private onSpaceshipHit() {
-    console.log("Y`ve been hit!");
     this.spaceShip.exploud();
     gameModel.spaceshipHit();
   }
 
   private onEnemyBossHit() {
-    console.log("Y`ve been hit BOSS!");
     this.enemyCollisionChecker.activate();
     this.enemyBossLabel.setNumbers(gameModel.enemyBossLifes - 1);
     gameModel.enemyHit();
@@ -144,7 +148,6 @@ export class MainScene implements IGameScene {
   }
 
   onTimerCountEnd() {
-    console.log("NO TIME LEFT");
     gameModel.noTimeLeft();
   }
 
@@ -154,7 +157,6 @@ export class MainScene implements IGameScene {
 
   onStartGame() {
     this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
-    console.log(gameModel.enemyBossLifes);
     this.enemyBossLabel.container.visible = false;
     this.spaceShip.addRockets();
     this.spaceShip.show();
@@ -170,13 +172,12 @@ export class MainScene implements IGameScene {
   }
 
   async onFinalLevel() {
-    this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
+    await this.transitionPopup.show();
     this.enemyBossLabel.container.visible = true;
     this.enemyBossLabel.setNumbers(gameModel.enemyBossLifes);
-    this.spaceShip.addRockets();
-    this.popup.close();
-    this.spaceShip.show();
     await this.enemyBoss.show();
+    this.spaceShip.addRockets();
+    this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
     this.enemyBossManager.activate();
     this.spaceShipCollisionChecker.setChecker(
       this.spaceShip,

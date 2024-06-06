@@ -55,8 +55,7 @@ class GameModel {
   reduceAsteroidsAmount() {
     this._asteroidsAmount--;
     if (this._asteroidsAmount === 0) {
-      this.isGameEnd = true;
-      this.gameEmmiter.emit("WIN_GAME");
+      this.gameEmmiter.emit("FINAL_LEVEL");
     }
   }
 

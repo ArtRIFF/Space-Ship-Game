@@ -25,6 +25,14 @@ export class GameConfig {
     stroke: "#df0707",
   };
 
+  static readonly transitonPopupFontStyle: any = {
+    fill: "b5b738",
+    fontSize: 100,
+    fontWeight: "bold",
+    fontVariant: "small-caps",
+    stroke: "#df0707",
+  };
+
   static readonly timerParam = {
     GAME_TIME: 60,
   };
