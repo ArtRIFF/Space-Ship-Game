@@ -20,6 +20,10 @@ export class SpaceshipHitChecker {
     this.callbackFunc = callbackFunc;
   }
 
+  activate() {
+    this.isActive = true;
+  }
+
   deactivate() {
     this.isActive = false;
   }
@@ -45,7 +49,6 @@ export class SpaceshipHitChecker {
           this.target.container.x + this.target.container.width / 2;
 
       if (isCollisionX && isCollisionY) {
-        this.target.exploud();
         rocket.isCollision = true;
         this.isActive = false;
         this.callbackFunc();

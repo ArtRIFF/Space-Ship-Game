@@ -13,6 +13,10 @@ export class GameConfig {
     ASTEROIDS_COLOR_VARIATION: ["0xE580FF", "0xBFAB60", "0x60ABBF", "0xBF7460"],
   };
 
+  static readonly enemyBossParam = {
+    LIFE_POINTS: 3,
+  };
+
   static readonly labelFontStyle: any = {
     fill: "b5b738",
     fontSize: 35,
@@ -22,7 +26,7 @@ export class GameConfig {
   };
 
   static readonly timerParam = {
-    GAME_TIME: 10,
+    GAME_TIME: 60,
   };
 
   static readonly popupParam = {

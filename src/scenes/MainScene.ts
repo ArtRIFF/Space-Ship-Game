@@ -94,11 +94,13 @@ export class MainScene implements IGameScene {
 
   private onSpaceshipHit() {
     console.log("Y`ve been hit!");
+    this.spaceShip.exploud();
     gameModel.spaceshipHit();
   }
 
   private onEnemyBossHit() {
     console.log("Y`ve been hit BOSS!");
+    this.enemyCollisionChecker.activate();
     gameModel.enemyHit();
   }
 
@@ -190,12 +192,12 @@ export class MainScene implements IGameScene {
 
   onLoseGame() {
     this.stopGame();
-    this.asteroids.forEach((asteroid) => asteroid.exploud());
-    this.enemyBossManager.deactivate();
     this.popup.show(false);
   }
 
   stopGame() {
+    this.asteroids.forEach((asteroid) => asteroid.exploud());
+    this.enemyBoss.exploud();
     this.asteroidsCollisionChecker.deactivate();
     this.enemyCollisionChecker.deactivate();
     this.spaceShipCollisionChecker.deactivate();

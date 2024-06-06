@@ -10,6 +10,7 @@ class GameModel {
   };
   private _rocketsAmount: number = 0;
   private _asteroidsAmount: number = 0;
+  private _enemyBossLifes: number = 0;
   public gameEmmiter: EventEmitter = new EventEmitter();
   private isGameEnd: boolean = false;
 
@@ -32,6 +33,7 @@ class GameModel {
   startGame() {
     this._asteroidsAmount = GameConfig.asteroidParam.ASTEROIDS_LIMIT;
     this._rocketsAmount = GameConfig.rocketParam.ROCKETS_LIMIT;
+    this._enemyBossLifes = GameConfig.enemyBossParam.LIFE_POINTS;
     this.isGameEnd = false;
     this.gameEmmiter.emit("START_GAME");
   }
@@ -59,7 +61,10 @@ class GameModel {
   }
 
   enemyHit() {
-    //this.gameEmmiter.emit("WIN_GAME");
+    this._enemyBossLifes--;
+    if (this._enemyBossLifes === 0) {
+      this.gameEmmiter.emit("WIN_GAME");
+    }
   }
 
   noTimeLeft() {
