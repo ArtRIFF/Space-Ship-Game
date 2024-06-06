@@ -22,7 +22,7 @@ export class GameConfig {
   };
 
   static readonly timerParam = {
-    GAME_TIME: 60,
+    GAME_TIME: 10,
   };
 
   static readonly popupParam = {

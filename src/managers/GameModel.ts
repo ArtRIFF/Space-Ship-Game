@@ -58,6 +58,10 @@ class GameModel {
     this.gameEmmiter.emit("LOSE_GAME");
   }
 
+  enemyHit() {
+    //this.gameEmmiter.emit("WIN_GAME");
+  }
+
   noTimeLeft() {
     if (!this.isGameEnd) {
       this.gameEmmiter.emit("LOSE_GAME");

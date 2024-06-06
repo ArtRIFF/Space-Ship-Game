@@ -36,8 +36,9 @@ export class EnemyBossUnit extends SpaceShipUnit {
     const finishMovePromise = new Promise<void>((resolve) => {
       resolveMove = resolve;
     });
-
+    this.moveOnStartPosition();
     this.container.visible = true;
+    this.container.alpha = 1;
     gsap.to(this.container, {
       y: this.container.height * 0.6,
       duration: 1.5,

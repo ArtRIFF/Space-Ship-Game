@@ -5,12 +5,15 @@ export class SpaceshipHitChecker {
   private attackingShip!: SpaceShipUnit;
   private isActive: boolean = false;
   private callbackFunc!: () => void;
+  private diraction!: "top" | "bottom";
 
   setChecker(
     target: SpaceShipUnit,
     spaceship: SpaceShipUnit,
-    callbackFunc: () => void
+    callbackFunc: () => void,
+    diraction: "top" | "bottom" = "bottom"
   ) {
+    this.diraction = diraction;
     this.isActive = true;
     this.target = target;
     this.attackingShip = spaceship;
@@ -22,11 +25,19 @@ export class SpaceshipHitChecker {
   }
 
   private checkCollision() {
-    this.attackingShip.firedRockets.forEach((rocket, index) => {
+    this.attackingShip.firedRockets.forEach((rocket) => {
       const rocketCoordinate = rocket.container.getBounds();
-      const isCollisionY =
-        rocketCoordinate.y >=
-        this.target.container.y - this.target.container.height / 3;
+
+      let isCollisionY;
+      if (this.diraction === "bottom") {
+        isCollisionY =
+          rocketCoordinate.y >=
+          this.target.container.y - this.target.container.height / 3;
+      } else {
+        isCollisionY =
+          rocketCoordinate.y <=
+          this.target.container.y + this.target.container.height / 3;
+      }
       const isCollisionX =
         rocketCoordinate.x >
           this.target.container.x - this.target.container.width / 2 &&

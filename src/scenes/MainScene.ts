@@ -22,6 +22,8 @@ export class MainScene implements IGameScene {
   private asteroidsCollisionChecker: CollisionChecker = new CollisionChecker();
   private spaceShipCollisionChecker: SpaceshipHitChecker =
     new SpaceshipHitChecker();
+  private enemyCollisionChecker: SpaceshipHitChecker =
+    new SpaceshipHitChecker();
   private rocketsLabel: Label = new Label("Rockets:", 0);
   private timer: Timer;
   private popup: MainPopup;
@@ -95,6 +97,11 @@ export class MainScene implements IGameScene {
     gameModel.spaceshipHit();
   }
 
+  private onEnemyBossHit() {
+    console.log("Y`ve been hit BOSS!");
+    gameModel.enemyHit();
+  }
+
   private addToScene(container: Sprite | Container) {
     this.stage.addChild(container);
   }
@@ -163,7 +170,14 @@ export class MainScene implements IGameScene {
     this.spaceShipCollisionChecker.setChecker(
       this.spaceShip,
       this.enemyBoss,
-      () => this.onSpaceshipHit()
+      () => this.onSpaceshipHit(),
+      "bottom"
+    );
+    this.enemyCollisionChecker.setChecker(
+      this.enemyBoss,
+      this.spaceShip,
+      () => this.onEnemyBossHit(),
+      "top"
     );
     this.timer.reset();
     this.timer.start();
@@ -183,6 +197,9 @@ export class MainScene implements IGameScene {
 
   stopGame() {
     this.asteroidsCollisionChecker.deactivate();
+    this.enemyCollisionChecker.deactivate();
+    this.spaceShipCollisionChecker.deactivate();
+    this.enemyBossManager.deactivate();
     this.timer.pause();
   }
 
@@ -192,5 +209,6 @@ export class MainScene implements IGameScene {
     this.enemyBossManager.update();
     this.asteroidsCollisionChecker.update();
     this.spaceShipCollisionChecker.update();
+    this.enemyCollisionChecker.update();
   }
 }
