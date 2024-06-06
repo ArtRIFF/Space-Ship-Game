@@ -3,25 +3,30 @@ import gsap from "gsap";
 import { gameModel } from "../managers/GameModel";
 import { Rocket } from "./Rocket";
 import { GameConfig } from "../config/GameConfig";
+import promiseHelper from "../helpers/ResolvablePromise";
 
 type TMoveDiraction = "left" | "right";
 
 export class SpaceShipUnit {
   private readonly moveStep = 100;
-  private readonly rocketsLimit;
-  private _rockets: Array<Rocket> = new Array();
+  protected rocketsLimit;
+  protected _rockets: Array<Rocket> = new Array();
   public firedRockets: Array<Rocket> = new Array();
-  private rocketCounter = 0;
+  protected rocketCounter = 0;
   public container: Container = new Container();
 
   constructor(private sprite: Sprite, private stage: Container) {
-    sprite.anchor.set(0.5);
-    sprite.setSize(100);
     this.rocketsLimit = GameConfig.rocketParam.ROCKETS_LIMIT;
-    this.stage.addChild(this.container);
-    this.container.addChild(this.sprite);
+    this.setSpriteParam(sprite);
     this.moveOnStartPosition();
     this.addRockets();
+  }
+
+  protected setSpriteParam(sprite: Sprite) {
+    sprite.anchor.set(0.5);
+    sprite.setSize(100);
+    this.stage.addChild(this.container);
+    this.container.addChild(sprite);
   }
 
   addRockets() {
@@ -34,31 +39,39 @@ export class SpaceShipUnit {
       const rocket = new Rocket(
         { x: 0, y: screenSize.height - this.container.height },
         GameConfig.rocketParam.USER_ROCKET_COLOR,
-        "top"
+        "top",
+        screenSize.height - this.container.height * 1.5
       );
 
       this._rockets.push(rocket);
     }
   }
 
-  moveRight() {
-    this.move("right");
+  async moveRight(distanceMultiplier?: number) {
+    await this.move("right", distanceMultiplier);
   }
 
-  moveLeft() {
-    this.move("left");
+  async moveLeft(distanceMultiplier?: number) {
+    await this.move("left", distanceMultiplier);
   }
 
-  private move(diraction: TMoveDiraction) {
+  private async move(
+    diraction: TMoveDiraction,
+    distanceMultiplier: number = 1
+  ): Promise<void> {
     let diractionIndex = 1;
+
     const screenWidth = gameModel.getScreenSize().width;
 
     if (diraction === "left") {
       diractionIndex = -1;
     }
+    const endMovePromise = promiseHelper.getResolvablePromise<void>();
 
     gsap.to(this.container.position, {
-      x: this.container.position.x + this.moveStep * diractionIndex,
+      x:
+        this.container.position.x +
+        this.moveStep * diractionIndex * distanceMultiplier,
       duration: 0.6,
       ease: "back.out(4)",
       onUpdate: () => {
@@ -73,7 +86,10 @@ export class SpaceShipUnit {
           this.container.position.x = this.container.width / 2;
         }
       },
+      onComplete: endMovePromise.resolve,
     });
+
+    await endMovePromise;
   }
 
   moveOnStartPosition() {
@@ -94,6 +110,17 @@ export class SpaceShipUnit {
     }
   }
 
+  show() {
+    this.moveOnStartPosition();
+    gsap.to(this.container, {
+      alpha: 1,
+      duration: 0.5,
+      onComplete: () => {
+        this.container.visible = true;
+      },
+    });
+  }
+
   get rocketsLeft(): number {
     return this._rockets.length;
   }
@@ -110,6 +137,16 @@ export class SpaceShipUnit {
       x: globalPosition.x,
       y: globalPosition.y,
     };
+  }
+
+  exploud() {
+    gsap.to(this.container, {
+      alpha: 0,
+      duration: 0.5,
+      onComplete: () => {
+        this.container.visible = false;
+      },
+    });
   }
 
   update() {

@@ -10,17 +10,19 @@ export class Rocket {
   public container: Container = new Container();
   private readonly flyDuration: number = 1;
   private readonly attackDiraction;
-  private flyAnimation: gsap.core.Tween | null = null;
   private graphic: Graphics;
   private _isCollision: boolean = false;
+  distance: number;
 
   constructor(
     coordinate: TCoordinate,
     color: string,
-    direction: TAttackDirection
+    direction: TAttackDirection,
+    distance: number
   ) {
     const rocketSize = GameConfig.rocketParam.ROCKET_SIZE;
     this.attackDiraction = direction;
+    this.distance = distance;
     this.graphic = new Graphics()
       .rect(coordinate.x, coordinate.y, rocketSize, rocketSize)
       .fill(color);
@@ -30,10 +32,9 @@ export class Rocket {
   async fly(startPosition: TCoordinate): Promise<void> {
     const promiseEndRocketDestination: ResolvablePromise<void> =
       promiseHelper.getResolvablePromise();
-    const distance = gameModel.getScreenSize().height;
     this.setPosition(startPosition);
-    this.flyAnimation = gsap.to(this.container.position, {
-      y: `${this.attackDiraction === "top" ? "-" : "+"}=${distance}`,
+    gsap.to(this.container.position, {
+      y: `${this.attackDiraction === "top" ? "-" : "+"}=${this.distance}`,
       duration: this.flyDuration,
       ease: "ease.out",
       onUpdate: () => {

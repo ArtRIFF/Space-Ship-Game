@@ -13,9 +13,21 @@ export class GameConfig {
     ASTEROIDS_COLOR_VARIATION: ["0xE580FF", "0xBFAB60", "0x60ABBF", "0xBF7460"],
   };
 
+  static readonly enemyBossParam = {
+    LIFE_POINTS: 3,
+  };
+
   static readonly labelFontStyle: any = {
     fill: "b5b738",
     fontSize: 35,
+    fontWeight: "bold",
+    fontVariant: "small-caps",
+    stroke: "#df0707",
+  };
+
+  static readonly transitonPopupFontStyle: any = {
+    fill: "b5b738",
+    fontSize: 100,
     fontWeight: "bold",
     fontVariant: "small-caps",
     stroke: "#df0707",
