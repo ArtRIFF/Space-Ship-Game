@@ -54,6 +54,10 @@ class GameModel {
     }
   }
 
+  spaceshipHit() {
+    this.gameEmmiter.emit("LOSE_GAME");
+  }
+
   noTimeLeft() {
     if (!this.isGameEnd) {
       this.gameEmmiter.emit("LOSE_GAME");

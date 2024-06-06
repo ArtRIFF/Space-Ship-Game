@@ -3,6 +3,7 @@ import { MainScene } from "./scenes/MainScene";
 import { gameModel } from "./managers/GameModel";
 import promiseHelper from "./helpers/ResolvablePromise";
 import { loaderScene } from "./scenes/LoaderScene";
+import "@pixi/gif";
 
 const app = new PIXI.Application();
 (globalThis as any).__PIXI_APP__ = app;
@@ -28,6 +29,9 @@ app
         { alias: "space_ship", src: "space-ship.png" },
         { alias: "space_bg", src: "space_bg.jpg" },
         { alias: "asteroid", src: "asteroid.png" },
+        { alias: "enemyBossIdle", src: "enemyBossIdle.gif" },
+        { alias: "enemyBossKilled", src: "enemyBossKilled.gif" },
+        { alias: "enemyBossAttack", src: "enemyBossAttack.gif" },
       ],
       app.stage
     );
