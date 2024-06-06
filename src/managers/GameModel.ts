@@ -55,6 +55,7 @@ class GameModel {
   reduceAsteroidsAmount() {
     this._asteroidsAmount--;
     if (this._asteroidsAmount === 0) {
+      this._rocketsAmount = GameConfig.rocketParam.ROCKETS_LIMIT;
       this.gameEmmiter.emit("FINAL_LEVEL");
     }
   }

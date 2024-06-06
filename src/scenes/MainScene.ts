@@ -172,12 +172,15 @@ export class MainScene implements IGameScene {
   }
 
   async onFinalLevel() {
+    this.asteroids.forEach((asteroid) => asteroid.exploud());
+    this.asteroidsCollisionChecker.deactivate();
+    this.timer.pause();
     await this.transitionPopup.show();
     this.enemyBossLabel.container.visible = true;
-    this.enemyBossLabel.setNumbers(gameModel.enemyBossLifes);
+    this.enemyBossLabel.setNumbers(gameModel.rocketsAmount);
     await this.enemyBoss.show();
     this.spaceShip.addRockets();
-    this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
+    this.rocketsLabel.setNumbers(10);
     this.enemyBossManager.activate();
     this.spaceShipCollisionChecker.setChecker(
       this.spaceShip,

@@ -21,7 +21,7 @@ export class TransitionPopup {
     gsap.to(this.container.scale, {
       x: 1,
       y: 1,
-      duration: 2,
+      duration: 3,
       ease: "bounce.out",
       onComplete: () => {
         this.hide();
