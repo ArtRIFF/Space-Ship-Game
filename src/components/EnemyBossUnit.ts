@@ -36,6 +36,7 @@ export class EnemyBossUnit extends SpaceShipUnit {
     const finishMovePromise = new Promise<void>((resolve) => {
       resolveMove = resolve;
     });
+    this.changeSprite("idle");
     this.moveOnStartPosition();
     this.container.visible = true;
     this.container.alpha = 1;
@@ -65,6 +66,11 @@ export class EnemyBossUnit extends SpaceShipUnit {
       }
     }
     this.state = state;
+  }
+
+  killed(){
+    this.changeSprite("killed");
+    super.hide();
   }
 
   moveOnStartPosition() {

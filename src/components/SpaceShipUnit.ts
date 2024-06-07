@@ -139,14 +139,18 @@ export class SpaceShipUnit {
     };
   }
 
-  exploud() {
+  hide() {
     gsap.to(this.container, {
-      alpha: 0,
-      duration: 0.5,
+      alpha: 0.3,
+      duration: 0.8,
       onComplete: () => {
         this.container.visible = false;
       },
     });
+  }
+
+  killed(){
+
   }
 
   update() {

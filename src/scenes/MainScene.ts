@@ -103,7 +103,7 @@ export class MainScene implements IGameScene {
   }
 
   private onSpaceshipHit() {
-    this.spaceShip.exploud();
+    this.spaceShip.hide();
     gameModel.spaceshipHit();
   }
 
@@ -172,12 +172,15 @@ export class MainScene implements IGameScene {
   }
 
   async onFinalLevel() {
+    this.asteroids.forEach((asteroid) => asteroid.exploud());
+    this.asteroidsCollisionChecker.deactivate();
+    this.timer.pause();
     await this.transitionPopup.show();
     this.enemyBossLabel.container.visible = true;
-    this.enemyBossLabel.setNumbers(gameModel.enemyBossLifes);
+    this.enemyBossLabel.setNumbers(gameModel.rocketsAmount);
     await this.enemyBoss.show();
     this.spaceShip.addRockets();
-    this.rocketsLabel.setNumbers(gameModel.rocketsAmount);
+    this.rocketsLabel.setNumbers(10);
     this.enemyBossManager.activate();
     this.spaceShipCollisionChecker.setChecker(
       this.spaceShip,
@@ -196,18 +199,19 @@ export class MainScene implements IGameScene {
   }
 
   onWinGame() {
+    this.enemyBoss.killed();
     this.stopGame();
     this.popup.show(true);
   }
 
   onLoseGame() {
+    this.enemyBoss.hide();
     this.stopGame();
     this.popup.show(false);
   }
 
   stopGame() {
     this.asteroids.forEach((asteroid) => asteroid.exploud());
-    this.enemyBoss.exploud();
     this.asteroidsCollisionChecker.deactivate();
     this.enemyCollisionChecker.deactivate();
     this.spaceShipCollisionChecker.deactivate();
