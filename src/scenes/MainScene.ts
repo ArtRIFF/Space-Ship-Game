@@ -103,7 +103,7 @@ export class MainScene implements IGameScene {
   }
 
   private onSpaceshipHit() {
-    this.spaceShip.exploud();
+    this.spaceShip.hide();
     gameModel.spaceshipHit();
   }
 
@@ -199,18 +199,19 @@ export class MainScene implements IGameScene {
   }
 
   onWinGame() {
+    this.enemyBoss.killed();
     this.stopGame();
     this.popup.show(true);
   }
 
   onLoseGame() {
+    this.enemyBoss.hide();
     this.stopGame();
     this.popup.show(false);
   }
 
   stopGame() {
     this.asteroids.forEach((asteroid) => asteroid.exploud());
-    this.enemyBoss.exploud();
     this.asteroidsCollisionChecker.deactivate();
     this.enemyCollisionChecker.deactivate();
     this.spaceShipCollisionChecker.deactivate();
